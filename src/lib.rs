@@ -88,31 +88,35 @@ impl CountriesRequest {
             pretty: None,
         }
     }
-    pub fn country(&mut self, country: &str) -> &mut CountriesRequest {
+    pub fn country(&mut self, country: &str) -> CountriesRequest {
         self.country = Some(country.to_string());
-        self
-    }
-    pub fn search(&mut self, search: &str) -> &mut CountriesRequest {
-        self.search = Some(search.to_string());
-        self
-    }
-    pub fn public(&mut self, public: bool) -> &mut CountriesRequest {
-        self.public = Some(public);
-        self
-    }
-
-    pub fn format(&mut self, format: Format) -> &mut CountriesRequest {
-        self.format = Some(format);
-        self
-    }
-
-    pub fn pretty(&mut self, pretty: bool) -> &mut CountriesRequest {
-        self.pretty = Some(pretty);
-        self
-    }
-
-    pub fn build(&self) -> CountriesRequest {
         self.to_owned()
+    }
+    pub fn search(&mut self, search: &str) -> CountriesRequest {
+        self.search = Some(search.to_string());
+        self.clone()
+    }
+    pub fn public(&mut self, public: bool) -> CountriesRequest {
+        self.public = Some(public);
+        self.to_owned()
+    }
+
+    pub fn format(&mut self, format: Format) -> CountriesRequest {
+        self.format = Some(format);
+        self.to_owned()
+    }
+
+    pub fn pretty(&mut self, pretty: bool) -> CountriesRequest {
+        self.pretty = Some(pretty);
+        self.to_owned()
+    }
+
+    pub async fn send(&self, api: &HolidayAPI) -> Result<Response, Box<dyn Error>> {
+        api.request(
+            Endpoint::Countries,
+            Request::CountriesRequest(self.to_owned()),
+        )
+        .await
     }
 }
 
@@ -122,8 +126,7 @@ impl HolidayAPI {
             Regex::new(r"[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}")
                 .expect("Regex is correct");
 
-        // uuid_regex.is_match(key)
-        true
+        uuid_regex.is_match(key)
     }
 
     fn is_valid_version(version: i32) -> Option<String> {
@@ -175,39 +178,33 @@ impl HolidayAPI {
         let response = client.get(url).send().await?;
         Ok(response)
     }
-
-    pub async fn countries(&self, request: CountriesRequest) -> Result<Response, Box<dyn Error>> {
-        self.request(Endpoint::Countries, Request::CountriesRequest(request))
-            .await
-    }
 }
 
 #[cfg(test)]
 mod tests {
     use super::*;
 
+    static EXPIRED_KEY: &str = "a112a6bb-a47c-4aa7-b1d2-aaaab24aaacf";
+
     #[test]
     fn test_working_iterator() {
-        let request = Request::CountriesRequest(
-            CountriesRequest::new()
-                .country("US")
-                .format(Format::CSV)
-                .build(),
-        );
-        let mut iter = request.into_iter();
+        let request =
+            Request::CountriesRequest(CountriesRequest::new().country("US").format(Format::CSV));
+        let iter = request.into_iter();
         println!("{:?}", iter);
-        assert!(iter.next() == Some(("country".to_owned(), "US".to_owned())));
-        assert!(iter.next() == Some(("format".to_owned(), "csv".to_owned())));
-        assert!(iter.count() == 0);
+        assert!(iter.count() == 2);
     }
 
     #[tokio::test]
+    #[ignore]
     async fn test_request() {
-        let test = HolidayAPI::new("invalid_key").unwrap();
-        let response = test
-            .countries(CountriesRequest::new().country("US").build())
+        let api = HolidayAPI::new(EXPIRED_KEY).unwrap();
+        let response = CountriesRequest::new()
+            .country("US")
+            .send(&api)
             .await
             .unwrap();
+
         assert!(response.status().is_client_error());
     }
 }
