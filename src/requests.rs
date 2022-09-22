@@ -21,7 +21,7 @@ pub struct CountriesRequest {
 
 impl CountriesRequest {
     pub fn new(api: &HolidayAPI) -> Self {
-        CountriesRequest {
+        Self {
             parameters: HashMap::new(),
             api: api.clone(),
         }
@@ -71,7 +71,7 @@ pub struct HolidaysRequest {
 
 impl HolidaysRequest {
     pub fn new(api: &HolidayAPI, country: String, year: i32) -> Self {
-        let mut holiday = HolidaysRequest {
+        let mut holiday = Self {
             parameters: HashMap::new(),
             api: api.clone(),
         };
@@ -154,8 +154,8 @@ pub struct WorkdayRequest {
 }
 
 impl WorkdayRequest {
-    pub fn new(api: &HolidayAPI, country: &str, start: &str, days: usize) -> WorkdayRequest {
-        let mut workday = WorkdayRequest {
+    pub fn new(api: &HolidayAPI, country: &str, start: &str, days: usize) -> Self {
+        let mut workday = Self {
             parameters: HashMap::new(),
             api: api.clone(),
         };
@@ -192,7 +192,45 @@ impl WorkdayRequest {
 }
 
 #[derive(Debug, Clone)]
-struct WorkdaysRequest {
+pub struct WorkdaysRequest {
     parameters: HashMap<String, String>,
     api: HolidayAPI,
+}
+
+impl WorkdaysRequest {
+    pub fn new(api: &HolidayAPI, country: &str, start: &str, days: usize) -> Self {
+        let mut workday = Self {
+            parameters: HashMap::new(),
+            api: api.clone(),
+        };
+        workday
+            .parameters
+            .insert("country".into(), country.to_string());
+        workday.parameters.insert("year".into(), start.to_string());
+        workday.parameters.insert("days".into(), days.to_string());
+        return workday;
+    }
+
+    pub fn pretty(&mut self, pretty: bool) -> Self {
+        self.parameters.insert("pretty".into(), pretty.to_string());
+        self.to_owned()
+    }
+
+    pub async fn get_raw(self) -> Result<String, Box<dyn Error>> {
+        Ok(self
+            .api
+            .request(Endpoint::Workdays, self.parameters)
+            .await?
+            .text()
+            .await?)
+    }
+
+    pub async fn get_full(self) -> Result<WorkdayResponse, Box<dyn Error>> {
+        Ok(serde_json::from_str(&self.get_raw().await?)?)
+    }
+
+    pub async fn get(self) -> Result<(String, Date), Box<dyn Error>> {
+        let res = self.get_full().await?;
+        Ok((res.date, res.weekday))
+    }
 }
