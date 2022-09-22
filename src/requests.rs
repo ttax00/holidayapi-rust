@@ -1,5 +1,8 @@
 use crate::{
-    responses::{CountriesResponse, Country, Date, Holiday, HolidaysResponse, WorkdayResponse},
+    responses::{
+        CountriesResponse, Country, Date, Holiday, HolidaysResponse, Language, LanguagesResponse,
+        WorkdayResponse, WorkdaysResponse,
+    },
     HolidayAPI,
 };
 use std::{collections::HashMap, error::Error};
@@ -225,12 +228,60 @@ impl WorkdaysRequest {
             .await?)
     }
 
-    pub async fn get_full(self) -> Result<WorkdayResponse, Box<dyn Error>> {
+    pub async fn get_full(self) -> Result<WorkdaysResponse, Box<dyn Error>> {
         Ok(serde_json::from_str(&self.get_raw().await?)?)
     }
 
-    pub async fn get(self) -> Result<(String, Date), Box<dyn Error>> {
+    pub async fn get(self) -> Result<u32, Box<dyn Error>> {
         let res = self.get_full().await?;
-        Ok((res.date, res.weekday))
+        Ok(res.workdays)
+    }
+}
+
+#[derive(Debug, Clone)]
+pub struct LanguagesRequest {
+    parameters: HashMap<String, String>,
+    api: HolidayAPI,
+}
+
+impl LanguagesRequest {
+    pub fn new(api: &HolidayAPI) -> Self {
+        Self {
+            parameters: HashMap::new(),
+            api: api.clone(),
+        }
+    }
+
+    pub fn language(&mut self, language: &str) -> Self {
+        self.parameters.insert("language".into(), language.into());
+        self.to_owned()
+    }
+
+    pub fn search(&mut self, search: &str) -> Self {
+        self.parameters.insert("search".into(), search.into());
+        self.to_owned()
+    }
+
+    pub fn pretty(&mut self, pretty: bool) -> Self {
+        self.parameters.insert("pretty".into(), pretty.to_string());
+        self.to_owned()
+    }
+
+    pub async fn get_raw(self) -> Result<String, Box<dyn Error>> {
+        Ok(self
+            .api
+            .request(Endpoint::Languages, self.parameters)
+            .await?
+            .text()
+            .await?)
+    }
+
+    pub async fn get_full(self) -> Result<LanguagesResponse, Box<dyn Error>> {
+        Ok(serde_json::from_str(&self.get_raw().await?)?)
+    }
+
+    pub async fn get(self) -> Result<Vec<Language>, Box<dyn Error>> {
+        let res = self.get_full().await?;
+        Ok(res.languages)
     }
 }

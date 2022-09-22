@@ -83,3 +83,28 @@ pub struct WorkdayResponse {
     pub error: Option<String>,
     pub warning: Option<String>,
 }
+
+#[derive(Debug, Deserialize)]
+
+pub struct WorkdaysResponse {
+    pub requests: APIRequests,
+    pub status: u32,
+    pub workdays: u32,
+    pub error: Option<String>,
+    pub warning: Option<String>,
+}
+
+#[derive(Debug, Deserialize)]
+
+pub struct LanguagesResponse {
+    pub requests: APIRequests,
+    pub status: u32,
+    pub languages: Vec<Language>,
+    pub error: Option<String>,
+    pub warning: Option<String>,
+}
+#[derive(Debug, Deserialize)]
+pub struct Language {
+    pub code: String,
+    pub name: String,
+}

@@ -2,7 +2,9 @@ extern crate log;
 
 mod requests;
 mod responses;
-use requests::{CountriesRequest, Endpoint, HolidaysRequest, WorkdayRequest, WorkdaysRequest};
+use requests::{
+    CountriesRequest, Endpoint, HolidaysRequest, LanguagesRequest, WorkdayRequest, WorkdaysRequest,
+};
 use std::{collections::HashMap, error::Error};
 
 use regex::Regex;
@@ -102,6 +104,10 @@ impl HolidayAPI {
 
     pub fn workdays(&self, country: &str, start: &str, days: usize) -> WorkdaysRequest {
         WorkdaysRequest::new(self, country, start, days)
+    }
+
+    pub fn languages(&self) -> LanguagesRequest {
+        LanguagesRequest::new(self)
     }
 }
 
