@@ -64,18 +64,22 @@ pub struct Holiday {
 
 #[derive(Debug, Deserialize)]
 pub struct Weekday {
-    date: Date,
-    observed: Observed,
+    pub date: Date,
+    pub observed: Date,
 }
 
 #[derive(Debug, Deserialize)]
 pub struct Date {
-    name: String,
-    numeric: String,
+    pub name: String,
+    pub numeric: String,
 }
 
 #[derive(Debug, Deserialize)]
-pub struct Observed {
-    name: String,
-    numeric: String,
+pub struct WorkdayResponse {
+    pub requests: APIRequests,
+    pub status: u32,
+    pub date: String,
+    pub weekday: Date,
+    pub error: Option<String>,
+    pub warning: Option<String>,
 }

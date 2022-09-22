@@ -2,7 +2,7 @@ extern crate log;
 
 mod requests;
 mod responses;
-use requests::{CountriesRequest, Endpoint, HolidaysRequest};
+use requests::{CountriesRequest, Endpoint, HolidaysRequest, WorkdayRequest};
 use std::{collections::HashMap, error::Error};
 
 use regex::Regex;
@@ -69,6 +69,7 @@ impl HolidayAPI {
         if let Some(error) = Self::is_valid_version(version) {
             return Err(HolidayAPIError::InvalidVersion(error));
         }
+
         Ok(Self::construct_api(key, version))
     }
 
@@ -78,24 +79,25 @@ impl HolidayAPI {
         parameters: HashMap<String, String>,
     ) -> Result<Response, Box<dyn Error>> {
         let client = reqwest::Client::new();
-        let url = Url::parse(self.base_url.as_str()).unwrap();
-
-        let url = url
-            .join(endpoint.to_string().to_ascii_lowercase().as_str())
-            .unwrap();
-
-        let url = Url::parse_with_params(&format!("{}?key={}", url, self.key), parameters).unwrap();
-
+        let url = Url::parse(self.base_url.as_str())?;
+        let url = url.join(endpoint.to_string().to_ascii_lowercase().as_str())?;
+        let url = Url::parse_with_params(&format!("{}?key={}", url, self.key), parameters)?;
         let response = client.get(url).send().await?;
-        Ok(response)
+        match response.error_for_status() {
+            Ok(res) => Ok(res),
+            Err(err) => Err(Box::new(err)),
+        }
     }
-
     pub fn countries(&self) -> CountriesRequest {
         CountriesRequest::new(self)
     }
 
-    pub fn holidays(&self, country: String, year: i32) -> HolidaysRequest {
-        HolidaysRequest::new(self, country, year)
+    pub fn holidays(&self, country: &str, year: i32) -> HolidaysRequest {
+        HolidaysRequest::new(self, country.into(), year)
+    }
+
+    pub fn workday(&self, country: &str, start: &str, days: usize) -> WorkdayRequest {
+        WorkdayRequest::new(self, country, start, days)
     }
 }
 
@@ -104,9 +106,10 @@ mod tests {
 
     use super::*;
 
-    static EXPIRED_KEY: &str = "a112a6bb-a47c-4aa7-b1d2-aaaab24aaacf";
+    static EXPIRED_KEY: &str = "daaaaaab-aaaa-aaaa-aaaa-2aaaada37e14";
 
     #[tokio::test]
+    #[ignore]
     async fn test_countries_api() {
         let api = HolidayAPI::new(EXPIRED_KEY).unwrap();
         let response = api
@@ -117,5 +120,12 @@ mod tests {
             .await
             .unwrap();
         println!("{:?}", response);
+    }
+
+    #[tokio::test]
+    async fn test_holidays_api() {
+        let api = HolidayAPI::new(EXPIRED_KEY).unwrap();
+        let response = api.holidays("jp", 2021).pretty(true).get().await.unwrap();
+        eprintln!("{:?}", response);
     }
 }
