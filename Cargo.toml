@@ -1,5 +1,5 @@
 [package]
-name = "holidayapi-rust"
+name = "holidayapi_rust"
 version = "0.1.0"
 edition = "2021"
 authors = ["TechTheAwesome <techtheawesome01@gmail.com>"]
