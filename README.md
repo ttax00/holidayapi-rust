@@ -13,7 +13,7 @@ holidayapi_rust = "0.1.0"
 ```
 ## Usage
 ### Basic
-```rs
+```rust
 let holiday_api = HolidayAPI::new(VALID_KEY).unwrap();
 
 // Fetch supported countries and subdivisions
@@ -27,7 +27,7 @@ let holidays: Vec<Holiday> = holiday_api.holidays("US", 2020).get().await.unwrap
 
 ```
 ### Builder pattern
-```rs
+```rust
 	let holiday_api = HolidayAPI::new(VALID_KEY).unwrap();
 
 	// Holidays
