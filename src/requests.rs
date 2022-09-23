@@ -157,7 +157,7 @@ pub struct WorkdayRequest {
 }
 
 impl WorkdayRequest {
-    pub fn new(api: &HolidayAPI, country: &str, start: &str, days: usize) -> Self {
+    pub fn new(api: &HolidayAPI, country: &str, start: &str, days: i32) -> Self {
         let mut workday = Self {
             parameters: HashMap::new(),
             api: api.clone(),
@@ -201,17 +201,17 @@ pub struct WorkdaysRequest {
 }
 
 impl WorkdaysRequest {
-    pub fn new(api: &HolidayAPI, country: &str, start: &str, days: usize) -> Self {
-        let mut workday = Self {
+    pub fn new(api: &HolidayAPI, country: &str, start: &str, days: &str) -> Self {
+        let mut workdays = Self {
             parameters: HashMap::new(),
             api: api.clone(),
         };
-        workday
+        workdays
             .parameters
             .insert("country".into(), country.to_string());
-        workday.parameters.insert("year".into(), start.to_string());
-        workday.parameters.insert("days".into(), days.to_string());
-        return workday;
+        workdays.parameters.insert("year".into(), start.to_string());
+        workdays.parameters.insert("end".into(), days.to_string());
+        return workdays;
     }
 
     pub fn pretty(&mut self, pretty: bool) -> Self {
