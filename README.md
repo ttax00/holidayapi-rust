@@ -28,33 +28,33 @@ let holidays: Vec<Holiday> = holiday_api.holidays("US", 2020).get().await.unwrap
 ```
 ### Builder pattern
 ```rust
-	let holiday_api = HolidayAPI::new(VALID_KEY).unwrap();
+let holiday_api = HolidayAPI::new(VALID_KEY).unwrap();
 
-	// Holidays
-	let specific_request: Vec<Holiday> = holiday_api
-		.holidays("jp", 2021)
-		.pretty(true)
-		.language("cn")
-		.public(true)
-		.get()
-		.await; 
-	
-	// Countries
-	let specific_request: Vec<Country> = holiday_api
-		.countries()
-		.search("hello world")
-		.country("US")
-		.public(true)
-		.get()
-		.await
-		.unwrap();
+// Holidays
+let specific_request: Vec<Holiday> = holiday_api
+	.holidays("jp", 2021)
+	.pretty(true)
+	.language("cn")
+	.public(true)
+	.get()
+	.await; 
 
-	// Languages
-	let specific_request: Vec<Language> = holiday_api
-		.languages()
-		.search("chinese")
-		.pretty(true)
-		.get()
-		.await
-		.unwrap();
+// Countries
+let specific_request: Vec<Country> = holiday_api
+	.countries()
+	.search("hello world")
+	.country("US")
+	.public(true)
+	.get()
+	.await
+	.unwrap();
+
+// Languages
+let specific_request: Vec<Language> = holiday_api
+	.languages()
+	.search("chinese")
+	.pretty(true)
+	.get()
+	.await
+	.unwrap();
 ```
