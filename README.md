@@ -4,6 +4,11 @@
 [![Test Status](https://img.shields.io/github/workflow/status/techtheawesome/holidayapi-rust/Rust?style=for-the-badge)](https://github.com/holidayapi/holidayapi-node/actions)
 
 Unofficial library for [Holiday API](https://holidayapi.com) written in Rust. This repo implements interface for original HolidayAPI endpoints seen [here](https://holidayapi.com/docs).
+
+## Acknowledgments
+
+This is heavily inspired by [holidayapi-node](https://github.com/holidayapi/holidayapi-node) and [holiday-api-rust](https://github.com/guibranco/holiday-api-rust) repositories. 
+
 ## Installation
 Add the following to your `Cargo.toml`
 
