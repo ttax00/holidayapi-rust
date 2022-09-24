@@ -19,17 +19,20 @@ holidayapi_rust = "0.1.0"
 ## Usage
 ### Basic
 ```rust
-let holiday_api = HolidayAPI::new(VALID_KEY).unwrap();
+use holidayapi_rust::HolidayAPI;
 
-// Fetch supported countries and subdivisions
-let countries: Vec<Country> = holiday_api.countries().get().await.unwrap();
+let holiday_api = HolidayAPI::new("00000000-0000-0000-0000-000000000000").unwrap();
 
-// Fetch supported languages
-let languages: Vec<Language> = holiday_api.languages().get().await.unwrap();
+async fn main() {
+	// Fetch supported countries and subdivisions
+	let countries: Vec<Country> = holiday_api.countries().get().await.unwrap();
 
-// Fetch holidays with minimum parameters
-let holidays: Vec<Holiday> = holiday_api.holidays("US", 2020).get().await.unwrap();
+	// Fetch supported languages
+	let languages: Vec<Language> = holiday_api.languages().get().await.unwrap();
 
+	// Fetch holidays with minimum parameters
+	let holidays: Vec<Holiday> = holiday_api.holidays("US", 2020).get().await.unwrap();
+}
 ```
 ### Builder pattern
 ```rust
@@ -63,3 +66,7 @@ let specific_request: Vec<Language> = holiday_api
 	.await
 	.unwrap();
 ```
+## Future ideas
+- Refactor async call using [IntoFuture](https://doc.rust-lang.org/std/future/trait.IntoFuture.html) to remove unnecessary `.get()` calls.
+- Implements memoization for api calls.
+- Add new utility functions on top of raw API. 
