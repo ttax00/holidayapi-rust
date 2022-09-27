@@ -2,12 +2,14 @@
 
 [![License](https://img.shields.io/github/license/TechTheAwesome/holidayapi-rust?style=for-the-badge)](https://github.com/TechTheAwesome/holidayapi-rust/blob/main/LICENSE)
 [![Test Status](https://img.shields.io/github/workflow/status/techtheawesome/holidayapi-rust/Rust?style=for-the-badge)](https://github.com/holidayapi/holidayapi-node/actions)
+![Crates.io](https://img.shields.io/crates/v/holidayapi_rust?style=for-the-badge)
+[![wakatime](https://wakatime.com/badge/user/4312729e-bc28-4bc0-9074-161a64a7ad20/project/5efdb06a-8b53-4d90-83bb-1f47a23a30c6.svg?style=for-the-badge)](https://wakatime.com/badge/user/4312729e-bc28-4bc0-9074-161a64a7ad20/project/5efdb06a-8b53-4d90-83bb-1f47a23a30c6)
 
 Unofficial library for [Holiday API](https://holidayapi.com) written in Rust. This repo implements interface for original HolidayAPI endpoints seen [here](https://holidayapi.com/docs).
 
 ## Acknowledgments
 
-This is heavily inspired by [holidayapi-node](https://github.com/holidayapi/holidayapi-node) and [holiday-api-rust](https://github.com/guibranco/holiday-api-rust) repositories. 
+This project is heavily inspired by [holidayapi-node](https://github.com/holidayapi/holidayapi-node) and [holiday-api-rust](https://github.com/guibranco/holiday-api-rust) repositories. 
 
 ## Installation
 Add the following to your `Cargo.toml`
