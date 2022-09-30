@@ -16,7 +16,7 @@ Add the following to your `Cargo.toml`
 
 ```toml
 [dependencies]
-holidayapi_rust = "0.1.0"
+holidayapi_rust = "0.1.1"
 ```
 ## Usage
 ### Basic

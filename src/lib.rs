@@ -1,3 +1,8 @@
+//! # Aspiration
+//! Unofficial library for [Holiday API](https://holidayapi.com) written in Rust. This repo implements interface for original HolidayAPI endpoints seen [here](https://holidayapi.com/docs).
+//!
+//! ## Acknowledgments
+//! This project is heavily inspired by [holidayapi-node](https://github.com/holidayapi/holidayapi-node) and [holiday-api-rust](https://github.com/guibranco/holiday-api-rust) repositories.
 extern crate log;
 
 mod requests;
@@ -34,6 +39,8 @@ impl fmt::Display for HolidayAPIError {
 }
 impl Error for HolidayAPIError {}
 
+///
+///
 impl HolidayAPI {
     pub fn is_valid_key(key: &str) -> Result<(), HolidayAPIError> {
         let uuid_regex =
