@@ -35,20 +35,27 @@ impl fmt::Display for HolidayAPIError {
 impl Error for HolidayAPIError {}
 
 impl HolidayAPI {
-    fn is_valid_key(key: &str) -> bool {
+    pub fn is_valid_key(key: &str) -> Result<(), HolidayAPIError> {
         let uuid_regex =
             Regex::new(r"[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}")
                 .expect("Regex is correct");
 
-        uuid_regex.is_match(key)
+        if uuid_regex.is_match(key) {
+            Ok(())
+        } else {
+            Err(HolidayAPIError::InvalidKeyFormat(key.into()))
+        }
     }
 
-    fn is_valid_version(version: i32) -> Option<String> {
+    pub fn is_valid_version(version: &i32) -> Result<(), HolidayAPIError> {
         let valid_versions = [1];
-        if !valid_versions.contains(&version) {
-            Some(format!("{} is not a valid version.\n", version))
+        if !valid_versions.contains(version) {
+            Err(HolidayAPIError::InvalidVersion(format!(
+                "Invalid version: {}, please choose: {:?}",
+                version, valid_versions
+            )))
         } else {
-            None
+            Ok(())
         }
     }
     fn construct_api(key: &str, version: i32) -> HolidayAPI {
@@ -73,9 +80,8 @@ impl HolidayAPI {
     /// let api = HolidayAPI::new("00000000-0000-0000-0000-000000000000").unwrap();
     /// ```
     pub fn new(key: &str) -> Result<HolidayAPI, HolidayAPIError> {
-        if !Self::is_valid_key(key) {
-            return Err(HolidayAPIError::InvalidKeyFormat(key.into()));
-        }
+        Self::is_valid_key(key)?;
+
         Ok(Self::construct_api(key, 1))
     }
 
@@ -96,12 +102,8 @@ impl HolidayAPI {
     /// let api = HolidayAPI::with_version("00000000-0000-0000-0000-000000000000", 1).unwrap();
     /// ```
     pub fn with_version(key: &str, version: i32) -> Result<HolidayAPI, HolidayAPIError> {
-        if !Self::is_valid_key(key) {
-            return Err(HolidayAPIError::InvalidKeyFormat(key.into()));
-        }
-        if let Some(error) = Self::is_valid_version(version) {
-            return Err(HolidayAPIError::InvalidVersion(error));
-        }
+        Self::is_valid_key(key)?;
+        Self::is_valid_version(&version)?;
 
         Ok(Self::construct_api(key, version))
     }
@@ -234,6 +236,19 @@ mod tests {
     use super::*;
 
     static EXPIRED_KEY: &str = "daaaaaab-aaaa-aaaa-aaaa-2aaaada37e14";
+    static INVALID_KEY: &str = "invalid-key-format";
+
+    #[test]
+    fn test_valid_key() {
+        match HolidayAPI::new(EXPIRED_KEY) {
+            Ok(_) => assert!(true),
+            Err(_) => unreachable!("Should not return an error on valid key"),
+        }
+        match HolidayAPI::new(INVALID_KEY) {
+            Ok(_) => unreachable!("Should return an error on invalid key"),
+            Err(_) => assert!(true),
+        }
+    }
 
     #[tokio::test]
     #[ignore]
