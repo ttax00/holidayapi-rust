@@ -307,11 +307,13 @@ impl WorkdaysRequest {
         return workdays;
     }
 
+    /// Prettifies results to be more human-readable.
     pub fn pretty(&mut self, pretty: bool) -> Self {
         self.parameters.insert("pretty".into(), pretty.to_string());
         self.to_owned()
     }
 
+    /// Return the raw string response if the request was successful.
     pub async fn get_raw(self) -> Result<String, Box<dyn Error>> {
         Ok(self
             .api
@@ -321,10 +323,12 @@ impl WorkdaysRequest {
             .await?)
     }
 
+    /// Parse the raw response and returns the full `WorkdaysResponse` struct.
     pub async fn get_full(self) -> Result<WorkdaysResponse, Box<dyn Error>> {
         Ok(serde_json::from_str(&self.get_raw().await?)?)
     }
 
+    /// Returns the number of working / business days between the specified start and end dates.
     pub async fn get(self) -> Result<u32, Box<dyn Error>> {
         let res = self.get_full().await?;
         Ok(res.workdays)
@@ -345,21 +349,39 @@ impl LanguagesRequest {
         }
     }
 
+    /// Return only the language with the specified code.
+    /// # Examples
+    /// ```
+    /// use holidayapi_rust::HolidayAPI;
+    ///
+    /// let api = HolidayAPI::new("00000000-0000-0000-0000-000000000000").unwrap();
+    /// let request = api.languages().language("us");
+    /// ```
     pub fn language(&mut self, language: &str) -> Self {
         self.parameters.insert("language".into(), language.into());
         self.to_owned()
     }
 
+    /// Search languages by code and name. Minimum 2 characters.
+    /// # Examples
+    /// ```
+    /// use holidayapi_rust::HolidayAPI;
+    ///
+    /// let api = HolidayAPI::new("00000000-0000-0000-0000-000000000000").unwrap();
+    /// let request = api.languages().search("Japan");
+    /// ```
     pub fn search(&mut self, search: &str) -> Self {
         self.parameters.insert("search".into(), search.into());
         self.to_owned()
     }
 
+    /// Prettifies results to be more human-readable.
     pub fn pretty(&mut self, pretty: bool) -> Self {
         self.parameters.insert("pretty".into(), pretty.to_string());
         self.to_owned()
     }
 
+    /// Return the raw string response if the request was successful.
     pub async fn get_raw(self) -> Result<String, Box<dyn Error>> {
         Ok(self
             .api
@@ -369,10 +391,12 @@ impl LanguagesRequest {
             .await?)
     }
 
+    /// Parse the raw response and returns the full `LanguagesResponse` struct.
     pub async fn get_full(self) -> Result<LanguagesResponse, Box<dyn Error>> {
         Ok(serde_json::from_str(&self.get_raw().await?)?)
     }
 
+    /// Returns `Vec<Language>` based on your request parameters.
     pub async fn get(self) -> Result<Vec<Language>, Box<dyn Error>> {
         let res = self.get_full().await?;
         Ok(res.languages)
