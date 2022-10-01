@@ -72,6 +72,22 @@ impl CountriesRequest {
         self.to_owned()
     }
 
+    /// Return only countries that have public holidays.
+    ///
+    /// Only work with `request.get_raw()`
+    ///
+    /// # Examples
+    /// ```
+    /// use holidayapi_rust::HolidayAPI;
+    ///
+    /// let api = HolidayAPI::new("00000000-0000-0000-0000-000000000000").unwrap();
+    /// let request = api.countries().format("csv");
+    /// ```
+    pub fn format(&mut self, format: &str) -> Self {
+        self.parameters.insert("format".into(), format.into());
+        self.to_owned()
+    }
+
     /// Response format (csv, json, php, tsv, yaml and xml). Defaults to JSON.
     ///
     /// # Examples
@@ -98,7 +114,16 @@ impl CountriesRequest {
 
     /// Parse the raw response and returns the full `CountriesResponse` struct.
     pub async fn get_full(self) -> Result<CountriesResponse, Box<dyn Error>> {
-        Ok(serde_json::from_str(&self.get_raw().await?)?)
+        let mut param = self.parameters;
+        param.insert("format".into(), "json".into());
+        Ok(serde_json::from_str(
+            &self
+                .api
+                .request(Endpoint::Countries, param)
+                .await?
+                .text()
+                .await?,
+        )?)
     }
 
     /// Returns the important `Vec<Country>` field.
@@ -149,6 +174,22 @@ impl HolidaysRequest {
     /// ```
     pub fn day(&mut self, day: i32) -> Self {
         self.parameters.insert("day".into(), day.to_string());
+        self.to_owned()
+    }
+
+    /// Return only countries that have public holidays.
+    ///
+    /// Only work with `request.get_raw()`
+    ///
+    /// # Examples
+    /// ```
+    /// use holidayapi_rust::HolidayAPI;
+    ///
+    /// let api = HolidayAPI::new("00000000-0000-0000-0000-000000000000").unwrap();
+    /// let request = api.countries().format("csv");
+    /// ```
+    pub fn format(&mut self, format: &str) -> Self {
+        self.parameters.insert("format".into(), format.into());
         self.to_owned()
     }
 
@@ -230,7 +271,16 @@ impl HolidaysRequest {
 
     /// Parse the raw response and returns the full `HolidaysResponse` struct.
     pub async fn get_full(self) -> Result<HolidaysResponse, Box<dyn Error>> {
-        Ok(serde_json::from_str(&self.get_raw().await?)?)
+        let mut param = self.parameters;
+        param.insert("format".into(), "json".into());
+        Ok(serde_json::from_str(
+            &self
+                .api
+                .request(Endpoint::Holidays, param)
+                .await?
+                .text()
+                .await?,
+        )?)
     }
 
     /// Returns only the important `Vec<Holiday>` field.
@@ -259,6 +309,22 @@ impl WorkdayRequest {
         return workday;
     }
 
+    /// Return only countries that have public holidays.
+    ///
+    /// Only work with `request.get_raw()`
+    ///
+    /// # Examples
+    /// ```
+    /// use holidayapi_rust::HolidayAPI;
+    ///
+    /// let api = HolidayAPI::new("00000000-0000-0000-0000-000000000000").unwrap();
+    /// let request = api.countries().format("csv");
+    /// ```
+    pub fn format(&mut self, format: &str) -> Self {
+        self.parameters.insert("format".into(), format.into());
+        self.to_owned()
+    }
+
     // Prettifies results to be more human-readable.
     pub fn pretty(&mut self, pretty: bool) -> Self {
         self.parameters.insert("pretty".into(), pretty.to_string());
@@ -277,7 +343,16 @@ impl WorkdayRequest {
 
     /// Parse the raw response and returns the full `WorkdayResponse` struct.
     pub async fn get_full(self) -> Result<WorkdayResponse, Box<dyn Error>> {
-        Ok(serde_json::from_str(&self.get_raw().await?)?)
+        let mut param = self.parameters;
+        param.insert("format".into(), "json".into());
+        Ok(serde_json::from_str(
+            &self
+                .api
+                .request(Endpoint::Workday, param)
+                .await?
+                .text()
+                .await?,
+        )?)
     }
 
     /// Returns only the important `("YYYY-MM-DD", Weekday)` tuple.
@@ -325,7 +400,16 @@ impl WorkdaysRequest {
 
     /// Parse the raw response and returns the full `WorkdaysResponse` struct.
     pub async fn get_full(self) -> Result<WorkdaysResponse, Box<dyn Error>> {
-        Ok(serde_json::from_str(&self.get_raw().await?)?)
+        let mut param = self.parameters;
+        param.insert("format".into(), "json".into());
+        Ok(serde_json::from_str(
+            &self
+                .api
+                .request(Endpoint::Workdays, param)
+                .await?
+                .text()
+                .await?,
+        )?)
     }
 
     /// Returns the number of working / business days between the specified start and end dates.
@@ -375,6 +459,22 @@ impl LanguagesRequest {
         self.to_owned()
     }
 
+    /// Return only countries that have public holidays.
+    ///
+    /// Only work with `request.get_raw()`
+    ///
+    /// # Examples
+    /// ```
+    /// use holidayapi_rust::HolidayAPI;
+    ///
+    /// let api = HolidayAPI::new("00000000-0000-0000-0000-000000000000").unwrap();
+    /// let request = api.countries().format("csv");
+    /// ```
+    pub fn format(&mut self, format: &str) -> Self {
+        self.parameters.insert("format".into(), format.into());
+        self.to_owned()
+    }
+
     /// Prettifies results to be more human-readable.
     pub fn pretty(&mut self, pretty: bool) -> Self {
         self.parameters.insert("pretty".into(), pretty.to_string());
@@ -393,7 +493,16 @@ impl LanguagesRequest {
 
     /// Parse the raw response and returns the full `LanguagesResponse` struct.
     pub async fn get_full(self) -> Result<LanguagesResponse, Box<dyn Error>> {
-        Ok(serde_json::from_str(&self.get_raw().await?)?)
+        let mut param = self.parameters;
+        param.insert("format".into(), "json".into());
+        Ok(serde_json::from_str(
+            &self
+                .api
+                .request(Endpoint::Languages, param)
+                .await?
+                .text()
+                .await?,
+        )?)
     }
 
     /// Returns `Vec<Language>` based on your request parameters.
