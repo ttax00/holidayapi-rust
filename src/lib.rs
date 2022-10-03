@@ -12,7 +12,8 @@ use requests::{
 use std::{collections::HashMap, error::Error, fmt};
 
 use regex::Regex;
-use reqwest::{Response, StatusCode, Url};
+pub use reqwest::Response;
+use reqwest::{StatusCode, Url};
 
 #[derive(Debug, Clone)]
 pub struct HolidayAPI {
