@@ -173,7 +173,7 @@ impl HolidayAPI {
     /// use holidayapi_rust::HolidayAPI;
     ///
     ///	let api = HolidayAPI::new("00000000-0000-0000-0000-000000000000").unwrap();
-    /// let specific_request = api.countries().search("united states").public(true);
+    /// let specific_request = api.countries().search("united states").public();
     /// ```
     pub fn countries(&self) -> CountriesRequest {
         CountriesRequest::new(self)
@@ -196,7 +196,7 @@ impl HolidayAPI {
     /// use holidayapi_rust::HolidayAPI;
     ///
     ///	let api = HolidayAPI::new("00000000-0000-0000-0000-000000000000").unwrap();
-    /// let specific_request = api.holidays("us", 2020).month(12).upcoming(true);
+    /// let specific_request = api.holidays("us", 2020).month(12).upcoming();
     /// ```
     pub fn holidays(&self, country: &str, year: i32) -> HolidaysRequest {
         HolidaysRequest::new(self, country.into(), year)

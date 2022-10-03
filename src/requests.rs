@@ -56,7 +56,7 @@ impl CountriesRequest {
     /// use holidayapi_rust::HolidayAPI;
     ///
     /// let api = HolidayAPI::new("00000000-0000-0000-0000-000000000000").unwrap();
-    /// let request = api.countries().public(true);
+    /// let request = api.countries().public();
     /// ```
     pub fn public(&mut self) -> Self {
         self.parameters.insert("public".into(), "true".to_string());
@@ -86,7 +86,7 @@ impl CountriesRequest {
     /// use holidayapi_rust::HolidayAPI;
     ///
     /// let api = HolidayAPI::new("00000000-0000-0000-0000-000000000000").unwrap();
-    /// let request = api.countries().pretty(true);
+    /// let request = api.countries().pretty();
     /// ```
     pub fn pretty(&mut self) -> Self {
         self.parameters.insert("pretty".into(), "true".into());
