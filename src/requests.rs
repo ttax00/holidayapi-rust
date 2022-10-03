@@ -58,8 +58,8 @@ impl CountriesRequest {
     /// let api = HolidayAPI::new("00000000-0000-0000-0000-000000000000").unwrap();
     /// let request = api.countries().public(true);
     /// ```
-    pub fn public(&mut self, public: bool) -> Self {
-        self.parameters.insert("public".into(), public.to_string());
+    pub fn public(&mut self) -> Self {
+        self.parameters.insert("public".into(), "true".to_string());
         self.to_owned()
     }
 
@@ -88,8 +88,8 @@ impl CountriesRequest {
     /// let api = HolidayAPI::new("00000000-0000-0000-0000-000000000000").unwrap();
     /// let request = api.countries().pretty(true);
     /// ```
-    pub fn pretty(&mut self, pretty: bool) -> Self {
-        self.parameters.insert("pretty".into(), pretty.to_string());
+    pub fn pretty(&mut self) -> Self {
+        self.parameters.insert("pretty".into(), "true".into());
         self.to_owned()
     }
 
@@ -185,15 +185,14 @@ impl HolidaysRequest {
     }
 
     /// Return only public holidays.
-    pub fn public(&mut self, public: bool) -> Self {
-        self.parameters.insert("public".into(), public.to_string());
+    pub fn public(&mut self) -> Self {
+        self.parameters.insert("public".into(), "true".into());
         self.to_owned()
     }
 
     /// Return state / province holidays alongside countrywide holidays.
-    pub fn subdivisions(&mut self, subdivisions: bool) -> Self {
-        self.parameters
-            .insert("subdivisions".into(), subdivisions.to_string());
+    pub fn subdivisions(&mut self) -> Self {
+        self.parameters.insert("subdivisions".into(), "true".into());
         self.to_owned()
     }
 
@@ -229,24 +228,22 @@ impl HolidaysRequest {
     /// Return the first day of holidays that occur before the specific date. month and day are required.
     ///
     /// Cannot be used with `upcoming`.
-    pub fn previous(&mut self, previous: bool) -> Self {
-        self.parameters
-            .insert("previous".into(), previous.to_string());
+    pub fn previous(&mut self) -> Self {
+        self.parameters.insert("previous".into(), "true".into());
         self.to_owned()
     }
 
     /// Return the first day of holidays that occur after the specific date. month and day are required.
     ///
     /// Cannot be used with previous.
-    pub fn upcoming(&mut self, upcoming: bool) -> Self {
-        self.parameters
-            .insert("upcoming".into(), upcoming.to_string());
+    pub fn upcoming(&mut self) -> Self {
+        self.parameters.insert("upcoming".into(), "true".into());
         self.to_owned()
     }
 
     /// Prettifies results to be more human-readable.
-    pub fn pretty(&mut self, pretty: bool) -> Self {
-        self.parameters.insert("pretty".into(), pretty.to_string());
+    pub fn pretty(&mut self) -> Self {
+        self.parameters.insert("pretty".into(), "true".into());
         self.to_owned()
     }
 
@@ -317,8 +314,8 @@ impl WorkdayRequest {
     }
 
     // Prettifies results to be more human-readable.
-    pub fn pretty(&mut self, pretty: bool) -> Self {
-        self.parameters.insert("pretty".into(), pretty.to_string());
+    pub fn pretty(&mut self) -> Self {
+        self.parameters.insert("pretty".into(), "true".into());
         self.to_owned()
     }
 
@@ -374,8 +371,8 @@ impl WorkdaysRequest {
     }
 
     /// Prettifies results to be more human-readable.
-    pub fn pretty(&mut self, pretty: bool) -> Self {
-        self.parameters.insert("pretty".into(), pretty.to_string());
+    pub fn pretty(&mut self) -> Self {
+        self.parameters.insert("pretty".into(), "true".into());
         self.to_owned()
     }
 
@@ -467,8 +464,8 @@ impl LanguagesRequest {
     }
 
     /// Prettifies results to be more human-readable.
-    pub fn pretty(&mut self, pretty: bool) -> Self {
-        self.parameters.insert("pretty".into(), pretty.to_string());
+    pub fn pretty(&mut self) -> Self {
+        self.parameters.insert("pretty".into(), "true".into());
         self.to_owned()
     }
 
