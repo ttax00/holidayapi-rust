@@ -49,8 +49,7 @@ impl fmt::Display for HolidayAPIError {
             HolidayAPIError::RequestError(req, err) => {
                 write!(
                     f,
-                    "{} ({}): {}\nRaw url: '{}'",
-                    req.status().unwrap().canonical_reason().unwrap(),
+                    "{}: {}\nRaw url: '{}'",
                     req.status().unwrap(),
                     err,
                     req.url().unwrap(),
