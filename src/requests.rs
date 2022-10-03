@@ -3,18 +3,9 @@ use crate::{
         CountriesResponse, Country, Date, Holiday, HolidaysResponse, Language, LanguagesResponse,
         WorkdayResponse, WorkdaysResponse,
     },
-    HolidayAPI,
+    Endpoint, HolidayAPI,
 };
 use std::{collections::HashMap, error::Error};
-
-#[derive(strum_macros::Display)]
-pub enum Endpoint {
-    Countries,
-    Holidays,
-    Languages,
-    Workday,
-    Workdays,
-}
 
 #[derive(Debug, Clone)]
 pub struct CountriesRequest {
@@ -106,7 +97,7 @@ impl CountriesRequest {
     pub async fn get_raw(self) -> Result<String, Box<dyn Error>> {
         Ok(self
             .api
-            .request(Endpoint::Countries, self.parameters)
+            .custom_request(Endpoint::Countries, self.parameters)
             .await?
             .text()
             .await?)
@@ -119,7 +110,7 @@ impl CountriesRequest {
         Ok(serde_json::from_str(
             &self
                 .api
-                .request(Endpoint::Countries, param)
+                .custom_request(Endpoint::Countries, param)
                 .await?
                 .text()
                 .await?,
@@ -263,7 +254,7 @@ impl HolidaysRequest {
     pub async fn get_raw(self) -> Result<String, Box<dyn Error>> {
         Ok(self
             .api
-            .request(Endpoint::Holidays, self.parameters)
+            .custom_request(Endpoint::Holidays, self.parameters)
             .await?
             .text()
             .await?)
@@ -276,7 +267,7 @@ impl HolidaysRequest {
         Ok(serde_json::from_str(
             &self
                 .api
-                .request(Endpoint::Holidays, param)
+                .custom_request(Endpoint::Holidays, param)
                 .await?
                 .text()
                 .await?,
@@ -335,7 +326,7 @@ impl WorkdayRequest {
     pub async fn get_raw(self) -> Result<String, Box<dyn Error>> {
         Ok(self
             .api
-            .request(Endpoint::Workday, self.parameters)
+            .custom_request(Endpoint::Workday, self.parameters)
             .await?
             .text()
             .await?)
@@ -348,7 +339,7 @@ impl WorkdayRequest {
         Ok(serde_json::from_str(
             &self
                 .api
-                .request(Endpoint::Workday, param)
+                .custom_request(Endpoint::Workday, param)
                 .await?
                 .text()
                 .await?,
@@ -392,7 +383,7 @@ impl WorkdaysRequest {
     pub async fn get_raw(self) -> Result<String, Box<dyn Error>> {
         Ok(self
             .api
-            .request(Endpoint::Workdays, self.parameters)
+            .custom_request(Endpoint::Workdays, self.parameters)
             .await?
             .text()
             .await?)
@@ -405,7 +396,7 @@ impl WorkdaysRequest {
         Ok(serde_json::from_str(
             &self
                 .api
-                .request(Endpoint::Workdays, param)
+                .custom_request(Endpoint::Workdays, param)
                 .await?
                 .text()
                 .await?,
@@ -485,7 +476,7 @@ impl LanguagesRequest {
     pub async fn get_raw(self) -> Result<String, Box<dyn Error>> {
         Ok(self
             .api
-            .request(Endpoint::Languages, self.parameters)
+            .custom_request(Endpoint::Languages, self.parameters)
             .await?
             .text()
             .await?)
@@ -498,7 +489,7 @@ impl LanguagesRequest {
         Ok(serde_json::from_str(
             &self
                 .api
-                .request(Endpoint::Languages, param)
+                .custom_request(Endpoint::Languages, param)
                 .await?
                 .text()
                 .await?,

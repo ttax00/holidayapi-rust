@@ -8,7 +8,7 @@ extern crate log;
 mod requests;
 mod responses;
 use requests::{
-    CountriesRequest, Endpoint, HolidaysRequest, LanguagesRequest, WorkdayRequest, WorkdaysRequest,
+    CountriesRequest, HolidaysRequest, LanguagesRequest, WorkdayRequest, WorkdaysRequest,
 };
 use std::{collections::HashMap, error::Error, fmt};
 
@@ -26,6 +26,15 @@ pub enum HolidayAPIError {
     InvalidKeyFormat(String),
     InvalidOrExpiredKey(String),
     InvalidVersion(String),
+}
+
+#[derive(strum_macros::Display)]
+pub enum Endpoint {
+    Countries,
+    Holidays,
+    Languages,
+    Workday,
+    Workdays,
 }
 
 impl fmt::Display for HolidayAPIError {
@@ -115,7 +124,19 @@ impl HolidayAPI {
         Ok(Self::construct_api(key, version))
     }
 
-    async fn request(
+    /// Make a custom request.
+    /// # Examples
+    ///
+    /// Basic usage
+    ///
+    /// ```
+    /// use holidayapi_rust::{ HolidayAPI, Endpoint };
+    /// use std::collections::HashMap;
+    ///
+    /// let api = HolidayAPI::new("00000000-0000-0000-0000-000000000000").unwrap();
+    /// let _future = api.custom_request(Endpoint::Countries, HashMap::new());
+    /// ```
+    pub async fn custom_request(
         &self,
         endpoint: Endpoint,
         parameters: HashMap<String, String>,
