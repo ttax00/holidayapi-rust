@@ -290,7 +290,7 @@ impl WorkdayRequest {
         workday
             .parameters
             .insert("country".into(), country.to_string());
-        workday.parameters.insert("year".into(), start.to_string());
+        workday.parameters.insert("start".into(), start.to_string());
         workday.parameters.insert("days".into(), days.to_string());
         return workday;
     }
@@ -362,7 +362,9 @@ impl WorkdaysRequest {
         workdays
             .parameters
             .insert("country".into(), country.to_string());
-        workdays.parameters.insert("year".into(), start.to_string());
+        workdays
+            .parameters
+            .insert("start".into(), start.to_string());
         workdays.parameters.insert("end".into(), days.to_string());
         return workdays;
     }
