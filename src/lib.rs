@@ -27,11 +27,8 @@ pub enum HolidayAPIError {
     InvalidKeyFormat(String),
     InvalidOrExpiredKey(String),
     InvalidVersion(String),
-    BadRequest(String),
-    PaymentRequired(String),
-    Unspecified(String),
+    RequestError(reqwest::Error, String),
 }
-
 #[derive(strum_macros::Display)]
 pub enum Endpoint {
     Countries,
@@ -49,9 +46,15 @@ impl fmt::Display for HolidayAPIError {
             HolidayAPIError::InvalidOrExpiredKey(key) => {
                 write!(f, "Invalid or expired key: {}", key)
             }
-            HolidayAPIError::PaymentRequired(err) => write!(f, "{}", err),
-            HolidayAPIError::BadRequest(err) => write!(f, "{}", err),
-            HolidayAPIError::Unspecified(err) => write!(f, "{}", err),
+            HolidayAPIError::RequestError(req, err) => {
+                write!(
+                    f,
+                    "{}: {}\nUrl: {}",
+                    req.status().unwrap().canonical_reason().unwrap(),
+                    err,
+                    req.url().unwrap(),
+                )
+            }
         }
     }
 }
@@ -154,43 +157,18 @@ impl HolidayAPI {
         let url = Url::parse_with_params(&format!("{}?key={}", url, self.key), parameters)?;
         let response = client.get(url).send().await?;
 
-        let get_error = |r: &str| -> Result<String, Box<dyn Error>> {
-            let val = serde_json::from_str::<Value>(r)?;
-            let o = val.as_object();
-            let error = o.and_then(|o| o.get("error")).unwrap();
-
-            Ok(error.as_str().unwrap().into())
-        };
         match response.error_for_status_ref() {
             Ok(_) => Ok(response),
-            Err(err) => match err.status() {
-                Some(StatusCode::BAD_REQUEST) => {
-                    Err(Box::new(HolidayAPIError::BadRequest(format!(
-                        "{}: {}\n {}",
-                        err.status().unwrap().as_str(),
-                        get_error(&response.text().await?)?,
-                        err.url().unwrap().as_str(),
-                    ))))
-                }
-                Some(StatusCode::UNAUTHORIZED) => Err(Box::new(
-                    HolidayAPIError::InvalidOrExpiredKey(self.key.clone()),
-                )),
-                Some(StatusCode::PAYMENT_REQUIRED) => {
-                    Err(Box::new(HolidayAPIError::PaymentRequired(format!(
-                        "{}: {}\n {}",
-                        err.status().unwrap().as_str(),
-                        get_error(&response.text().await?)?,
-                        err.url().unwrap().as_str(),
-                    ))))
-                }
-                Some(_) => Err(Box::new(HolidayAPIError::Unspecified(format!(
-                    "{}: {}\n {}",
-                    err.status().unwrap().as_str(),
-                    get_error(&response.text().await?)?,
-                    err.url().unwrap().as_str(),
-                )))),
-                None => unreachable!(),
-            },
+            Err(err) => {
+                let val = serde_json::from_str::<Value>(&response.text().await?)?;
+                let o = val.as_object();
+                let error = o.and_then(|o| o.get("error")).unwrap();
+
+                Err(Box::new(HolidayAPIError::RequestError(
+                    err,
+                    error.as_str().unwrap().into(),
+                )))
+            }
         }
     }
 
