@@ -63,8 +63,7 @@ impl CountriesRequest {
         self.to_owned()
     }
 
-    /// Return only countries that have public holidays.
-    ///
+    /// Response format (csv, json, php, tsv, yaml and xml). Defaults to JSON.
     /// Only work with `request.get_raw()`
     ///
     /// # Examples
@@ -168,8 +167,7 @@ impl HolidaysRequest {
         self.to_owned()
     }
 
-    /// Return only countries that have public holidays.
-    ///
+    /// Response format (csv, json, php, tsv, yaml and xml). Defaults to JSON.
     /// Only work with `request.get_raw()`
     ///
     /// # Examples
@@ -177,7 +175,7 @@ impl HolidaysRequest {
     /// use holidayapi_rust::HolidayAPI;
     ///
     /// let api = HolidayAPI::new("00000000-0000-0000-0000-000000000000").unwrap();
-    /// let request = api.countries().format("csv");
+    /// let request = api.holidays("us", 2021).format("csv");
     /// ```
     pub fn format(&mut self, format: &str) -> Self {
         self.parameters.insert("format".into(), format.into());
@@ -297,8 +295,7 @@ impl WorkdayRequest {
         return workday;
     }
 
-    /// Return only countries that have public holidays.
-    ///
+    /// Response format (csv, json, php, tsv, yaml and xml). Defaults to JSON.
     /// Only work with `request.get_raw()`
     ///
     /// # Examples
@@ -306,7 +303,7 @@ impl WorkdayRequest {
     /// use holidayapi_rust::HolidayAPI;
     ///
     /// let api = HolidayAPI::new("00000000-0000-0000-0000-000000000000").unwrap();
-    /// let request = api.countries().format("csv");
+    /// let request = api.workday("jp", "2021-01-01", 30).format("csv");
     /// ```
     pub fn format(&mut self, format: &str) -> Self {
         self.parameters.insert("format".into(), format.into());
@@ -368,6 +365,21 @@ impl WorkdaysRequest {
         workdays.parameters.insert("year".into(), start.to_string());
         workdays.parameters.insert("end".into(), days.to_string());
         return workdays;
+    }
+
+    /// Response format (csv, json, php, tsv, yaml and xml). Defaults to JSON.
+    /// Only work with `request.get_raw()`
+    ///
+    /// # Examples
+    /// ```
+    /// use holidayapi_rust::HolidayAPI;
+    ///
+    /// let api = HolidayAPI::new("00000000-0000-0000-0000-000000000000").unwrap();
+    /// let request = api.workdays("us", "2021-01-01", "2021-02-01").format("csv");
+    /// ```
+    pub fn format(&mut self, format: &str) -> Self {
+        self.parameters.insert("format".into(), format.into());
+        self.to_owned()
     }
 
     /// Prettifies results to be more human-readable.
@@ -447,8 +459,7 @@ impl LanguagesRequest {
         self.to_owned()
     }
 
-    /// Return only countries that have public holidays.
-    ///
+    /// Response format (csv, json, php, tsv, yaml and xml). Defaults to JSON.
     /// Only work with `request.get_raw()`
     ///
     /// # Examples
@@ -456,7 +467,7 @@ impl LanguagesRequest {
     /// use holidayapi_rust::HolidayAPI;
     ///
     /// let api = HolidayAPI::new("00000000-0000-0000-0000-000000000000").unwrap();
-    /// let request = api.countries().format("csv");
+    /// let request = api.languages().format("csv");
     /// ```
     pub fn format(&mut self, format: &str) -> Self {
         self.parameters.insert("format".into(), format.into());
