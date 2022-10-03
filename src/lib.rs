@@ -26,6 +26,9 @@ pub enum HolidayAPIError {
     InvalidKeyFormat(String),
     InvalidOrExpiredKey(String),
     InvalidVersion(String),
+    BadRequest(String),
+    PaymentRequired(String),
+    Unspecified(String),
 }
 
 #[derive(strum_macros::Display)]
@@ -40,9 +43,14 @@ pub enum Endpoint {
 impl fmt::Display for HolidayAPIError {
     fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
         match self {
-            Self::InvalidKeyFormat(key) => write!(f, "Invalid key: {}", key),
-            Self::InvalidVersion(version) => write!(f, "Invalid version: {}", version),
-            Self::InvalidOrExpiredKey(key) => write!(f, "Invalid or expired key: {}", key),
+            HolidayAPIError::InvalidKeyFormat(key) => write!(f, "Invalid key: {}", key),
+            HolidayAPIError::InvalidVersion(version) => write!(f, "Invalid version: {}", version),
+            HolidayAPIError::InvalidOrExpiredKey(key) => {
+                write!(f, "Invalid or expired key: {}", key)
+            }
+            HolidayAPIError::PaymentRequired(err) => write!(f, "Payment required: {}", err),
+            HolidayAPIError::BadRequest(err) => write!(f, "Payment required: {}", err),
+            HolidayAPIError::Unspecified(err) => write!(f, "Payment required: {}", err),
         }
     }
 }
@@ -144,13 +152,21 @@ impl HolidayAPI {
         let url = url.join(endpoint.to_string().to_ascii_lowercase().as_str())?;
         let url = Url::parse_with_params(&format!("{}?key={}", url, self.key), parameters)?;
         let response = client.get(url).send().await?;
-        match response.error_for_status() {
-            Ok(res) => Ok(res),
+        match response.error_for_status_ref() {
+            Ok(_) => Ok(response),
             Err(err) => match err.status() {
+                Some(StatusCode::BAD_REQUEST) => Err(Box::new(HolidayAPIError::BadRequest(
+                    response.text().await?,
+                ))),
                 Some(StatusCode::UNAUTHORIZED) => Err(Box::new(
                     HolidayAPIError::InvalidOrExpiredKey(self.key.clone()),
                 )),
-                Some(_) => Err(Box::new(err)),
+                Some(StatusCode::PAYMENT_REQUIRED) => Err(Box::new(
+                    HolidayAPIError::PaymentRequired(response.text().await?),
+                )),
+                Some(_) => Err(Box::new(HolidayAPIError::Unspecified(
+                    response.text().await?,
+                ))),
                 None => unreachable!(),
             },
         }
