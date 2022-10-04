@@ -4,17 +4,17 @@
 //! This project is heavily inspired by [holidayapi-node](https://github.com/holidayapi/holidayapi-node) and [holiday-api-rust](https://github.com/guibranco/holiday-api-rust) repositories.
 extern crate log;
 
+pub mod prelude;
 mod requests;
 mod responses;
-use requests::{
-    CountriesRequest, HolidaysRequest, LanguagesRequest, WorkdayRequest, WorkdaysRequest,
-};
-use serde_json::{Value, Value::Object};
+use prelude::{CountriesResponse, HolidaysResponse};
+use requests::{LanguagesRequest, Request, WorkdayRequest, WorkdaysRequest};
+use serde_json::Value;
 use std::{collections::HashMap, error::Error, fmt};
 
 use regex::Regex;
 pub use reqwest::Response;
-use reqwest::{StatusCode, Url};
+use reqwest::Url;
 
 #[derive(Debug, Clone)]
 pub struct HolidayAPI {
@@ -101,7 +101,7 @@ impl HolidayAPI {
     /// Basic usage
     ///
     /// ```
-    /// use holidayapi_rust::HolidayAPI;
+    /// use holidayapi_rust::prelude::*;
     ///
     /// let api = HolidayAPI::new("00000000-0000-0000-0000-000000000000").unwrap();
     /// ```
@@ -123,7 +123,7 @@ impl HolidayAPI {
     /// Basic usage
     ///
     /// ```
-    /// use holidayapi_rust::HolidayAPI;
+    /// use holidayapi_rust::prelude::*;
     ///
     /// let api = HolidayAPI::with_version("00000000-0000-0000-0000-000000000000", 1).unwrap();
     /// ```
@@ -178,7 +178,7 @@ impl HolidayAPI {
     ///
     /// Basic usage
     /// ```
-    /// use holidayapi_rust::HolidayAPI;
+    /// use holidayapi_rust::prelude::*;
     ///
     ///	let api = HolidayAPI::new("00000000-0000-0000-0000-000000000000").unwrap();
     /// let request = api.countries();
@@ -186,13 +186,13 @@ impl HolidayAPI {
     ///
     /// Adding optional parameters with builder pattern
     /// ```
-    /// use holidayapi_rust::HolidayAPI;
+    /// use holidayapi_rust::prelude::*;
     ///
     ///	let api = HolidayAPI::new("00000000-0000-0000-0000-000000000000").unwrap();
     /// let specific_request = api.countries().search("united states").public();
     /// ```
-    pub fn countries(&self) -> CountriesRequest {
-        CountriesRequest::new(self)
+    pub fn countries(&self) -> Request<CountriesResponse> {
+        Request::<CountriesResponse>::new(self)
     }
 
     /// Generates a minimal `holidays` request and returns it.
@@ -201,7 +201,7 @@ impl HolidayAPI {
     ///
     /// Basic usage
     /// ```
-    /// use holidayapi_rust::HolidayAPI;
+    /// use holidayapi_rust::prelude::*;
     ///
     ///	let api = HolidayAPI::new("00000000-0000-0000-0000-000000000000").unwrap();
     /// let request = api.holidays("us", 2020);
@@ -209,13 +209,13 @@ impl HolidayAPI {
     ///
     /// Adding optional parameters with builder pattern
     /// ```
-    /// use holidayapi_rust::HolidayAPI;
+    /// use holidayapi_rust::prelude::*;
     ///
     ///	let api = HolidayAPI::new("00000000-0000-0000-0000-000000000000").unwrap();
     /// let specific_request = api.holidays("us", 2020).month(12).upcoming();
     /// ```
-    pub fn holidays(&self, country: &str, year: i32) -> HolidaysRequest {
-        HolidaysRequest::new(self, country.into(), year)
+    pub fn holidays(&self, country: &str, year: i32) -> Request<HolidaysResponse> {
+        Request::<HolidaysResponse>::new(self, country.into(), year)
     }
 
     /// Generates a minimal `workday` request and returns it.
@@ -224,7 +224,7 @@ impl HolidayAPI {
     ///
     /// Basic usage
     /// ```
-    /// use holidayapi_rust::HolidayAPI;
+    /// use holidayapi_rust::prelude::*;
     ///
     ///	let api = HolidayAPI::new("00000000-0000-0000-0000-000000000000").unwrap();
     /// let request = api.workday("us","YYYY-MM-DD", 100);
@@ -239,7 +239,7 @@ impl HolidayAPI {
     ///
     /// Basic usage
     /// ```
-    /// use holidayapi_rust::HolidayAPI;
+    /// use holidayapi_rust::prelude::*;
     ///
     ///	let api = HolidayAPI::new("00000000-0000-0000-0000-000000000000").unwrap();
     /// let request = api.workdays("us", "YYYY-MM-DD", "YYYY-MM-DD");
@@ -254,7 +254,7 @@ impl HolidayAPI {
     ///
     /// Basic usage
     /// ```
-    /// use holidayapi_rust::HolidayAPI;
+    /// use holidayapi_rust::prelude::*;
     ///
     ///	let api = HolidayAPI::new("00000000-0000-0000-0000-000000000000").unwrap();
     /// let request = api.languages();
@@ -262,7 +262,7 @@ impl HolidayAPI {
     ///
     /// Adding optional parameters with builder pattern
     /// ```
-    /// use holidayapi_rust::HolidayAPI;
+    /// use holidayapi_rust::prelude::*;
     ///
     /// let api = HolidayAPI::new("00000000-0000-0000-0000-000000000000").unwrap();
     /// let specific_request = api.languages().search("united states");
@@ -289,6 +289,15 @@ mod tests {
         match HolidayAPI::new(INVALID_KEY) {
             Ok(_) => unreachable!("Should return an error on invalid key"),
             Err(_) => assert!(true),
+        }
+    }
+
+    #[tokio::test]
+    async fn test_countries() {
+        let api = HolidayAPI::new(EXPIRED_KEY).unwrap();
+        match api.countries().get().await {
+            Ok(o) => println!("{:?}", o),
+            Err(o) => println!("{}", o),
         }
     }
 }

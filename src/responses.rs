@@ -1,13 +1,13 @@
 use serde::Deserialize;
 
-#[derive(Debug, Deserialize)]
+#[derive(Debug, Deserialize, Clone)]
 pub struct APIRequests {
     pub available: u32,
     pub used: u32,
     pub resets: String,
 }
 
-#[derive(Debug, Deserialize)]
+#[derive(Debug, Deserialize, Clone)]
 pub struct CountriesResponse {
     pub requests: APIRequests,
     pub status: u32,
@@ -16,7 +16,7 @@ pub struct CountriesResponse {
     pub countries: Vec<Country>,
 }
 
-#[derive(Debug, Deserialize)]
+#[derive(Debug, Deserialize, Clone)]
 pub struct Country {
     pub code: String,
     pub name: String,
@@ -26,7 +26,7 @@ pub struct Country {
     pub subdivisions: Vec<Subdivision>,
 }
 
-#[derive(Debug, Deserialize)]
+#[derive(Debug, Deserialize, Clone)]
 pub struct Codes {
     #[serde(rename = "alpha-2")]
     pub alpha_2: String,
@@ -35,14 +35,14 @@ pub struct Codes {
     pub numeric: String,
 }
 
-#[derive(Debug, Deserialize)]
+#[derive(Debug, Deserialize, Clone)]
 pub struct Subdivision {
     pub code: String,
     pub name: String,
     pub languages: Vec<String>,
 }
 
-#[derive(Debug, Deserialize)]
+#[derive(Debug, Deserialize, Clone)]
 pub struct HolidaysResponse {
     pub requests: APIRequests,
     pub status: u32,
@@ -51,7 +51,7 @@ pub struct HolidaysResponse {
     pub warning: Option<String>,
 }
 
-#[derive(Debug, Deserialize)]
+#[derive(Debug, Deserialize, Clone)]
 pub struct Holiday {
     pub name: String,
     pub date: String,
@@ -62,19 +62,19 @@ pub struct Holiday {
     pub weekday: Weekday,
 }
 
-#[derive(Debug, Deserialize)]
+#[derive(Debug, Deserialize, Clone)]
 pub struct Weekday {
     pub date: Date,
     pub observed: Date,
 }
 
-#[derive(Debug, Deserialize)]
+#[derive(Debug, Deserialize, Clone)]
 pub struct Date {
     pub name: String,
     pub numeric: String,
 }
 
-#[derive(Debug, Deserialize)]
+#[derive(Debug, Deserialize, Clone)]
 pub struct WorkdayResponse {
     pub requests: APIRequests,
     pub status: u32,
@@ -84,7 +84,7 @@ pub struct WorkdayResponse {
     pub warning: Option<String>,
 }
 
-#[derive(Debug, Deserialize)]
+#[derive(Debug, Deserialize, Clone)]
 
 pub struct WorkdaysResponse {
     pub requests: APIRequests,
@@ -94,7 +94,7 @@ pub struct WorkdaysResponse {
     pub warning: Option<String>,
 }
 
-#[derive(Debug, Deserialize)]
+#[derive(Debug, Deserialize, Clone)]
 
 pub struct LanguagesResponse {
     pub requests: APIRequests,
@@ -103,7 +103,7 @@ pub struct LanguagesResponse {
     pub error: Option<String>,
     pub warning: Option<String>,
 }
-#[derive(Debug, Deserialize)]
+#[derive(Debug, Deserialize, Clone)]
 pub struct Language {
     pub code: String,
     pub name: String,
