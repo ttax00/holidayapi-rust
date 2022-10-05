@@ -2,6 +2,26 @@
 //! Unofficial library for [Holiday API](https://holidayapi.com) written in Rust. This repo implements interface for original HolidayAPI endpoints seen [here](https://holidayapi.com/docs).
 //! ## Acknowledgments
 //! This project is heavily inspired by [holidayapi-node](https://github.com/holidayapi/holidayapi-node) and [holiday-api-rust](https://github.com/guibranco/holiday-api-rust) repositories.
+//!
+//! ## Installation
+//! ```console
+//! $ cargo add holidayapi_rust
+//! ```
+//! ## Usage
+//! ```
+//! use holidayapi_rust::prelude::*;
+//!
+//! #[tokio::main]
+//! async fn main() {
+//! 	let api = HolidayAPI::new("00000000-0000-0000-0000-000000000000").unwrap();
+//! 	let request = api.holidays("us", 2021).month(10).day(20).public().upcoming();
+//! 	let response = request.get().await;
+//!		match response {
+//! 		Ok(_) => { /* */ },
+//! 		Err(_) => { /* */ },
+//! 	}
+//! }
+//! ```
 pub mod prelude;
 
 mod requests;
