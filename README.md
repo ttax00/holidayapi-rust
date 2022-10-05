@@ -18,10 +18,15 @@ Add the following to your `Cargo.toml`
 [dependencies]
 holidayapi_rust = "0.1.5"
 ```
+
+Or use `cargo` cli:
+```console
+$ cargo add holidayapi_rust
+```
 ## Usage
 ### Basic
 ```rust
-use holidayapi_rust::HolidayAPI;
+use holidayapi_rust::prelude::*;
 
 let holiday_api = HolidayAPI::new("00000000-0000-0000-0000-000000000000").unwrap();
 
@@ -38,6 +43,7 @@ async fn main() {
 ```
 ### Builder pattern
 ```rust
+use holidayapi_rust::prelude::*;
 let holiday_api = HolidayAPI::new(VALID_KEY).unwrap();
 
 // Holidays
@@ -69,6 +75,6 @@ let specific_request: Vec<Language> = holiday_api
 	.unwrap();
 ```
 ## Future ideas
-- Refactor async call using [IntoFuture](https://doc.rust-lang.org/std/future/trait.IntoFuture.html) to remove unnecessary `.get()` calls.
-- Implements memoization for api calls.
-- Add new utility functions on top of raw API. 
+- [ ] Refactor async call using [IntoFuture](https://doc.rust-lang.org/std/future/trait.IntoFuture.html) to remove unnecessary `.get()` calls.
+- [ ] Implements memoization for api calls.
+- [ ] Add new utility functions on top of raw API. 
