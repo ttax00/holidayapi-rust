@@ -22,34 +22,18 @@ where
 {
     /// Response format (csv, json, php, tsv, yaml and xml). Defaults to JSON.
     /// Only work with `request.get_raw()`
-    ///
-    /// # Examples
-    /// ```
-    /// use holidayapi_rust::prelude::*;
-    ///
-    /// let api = HolidayAPI::new("00000000-0000-0000-0000-000000000000").unwrap();
-    /// let request = api.countries().format("csv");
-    /// ```
     pub fn format(&mut self, format: &str) -> Self {
         self.parameters.insert("format".into(), format.into());
         self.to_owned()
     }
 
-    /// Response format (csv, json, php, tsv, yaml and xml). Defaults to JSON.
-    ///
-    /// # Examples
-    /// ```
-    /// use holidayapi_rust::prelude::*;
-    ///
-    /// let api = HolidayAPI::new("00000000-0000-0000-0000-000000000000").unwrap();
-    /// let request = api.countries().pretty();
-    /// ```
+    /// Prettifies results to be more human-readable.
     pub fn pretty(&mut self) -> Self {
         self.parameters.insert("pretty".into(), "true".into());
         self.to_owned()
     }
 
-    /// Return the raw string response if the request was successful.
+    /// Return the raw String of the response
     pub async fn get_raw(self) -> Result<String, Box<dyn Error>> {
         Ok(self
             .api
@@ -59,7 +43,7 @@ where
             .await?)
     }
 
-    /// Parse the raw response and returns the full `CountriesResponse` struct.
+    /// Returns the parsed struct of the response if successful
     pub async fn get_full(self) -> Result<T, Box<dyn Error>> {
         let mut param = self.parameters;
         param.insert("format".into(), "json".into());
@@ -76,19 +60,7 @@ impl Request<CountriesResponse> {
             _marker: PhantomData,
         }
     }
-    /// Returns only the important `Vec<Holiday>` field.
-    pub async fn get(self) -> Result<Vec<Country>, Box<dyn Error>> {
-        Ok(self.get_full().await?.countries)
-    }
-}
 
-pub trait CountriesRequest {
-    fn country(&mut self, country: &str) -> Self;
-    fn search(&mut self, search: &str) -> Self;
-    fn public(&mut self) -> Self;
-}
-
-impl CountriesRequest for Request<CountriesResponse> {
     /// Return only the country with the specified code.
     ///
     /// # Examples
@@ -98,7 +70,7 @@ impl CountriesRequest for Request<CountriesResponse> {
     /// let api = HolidayAPI::new("00000000-0000-0000-0000-000000000000").unwrap();
     /// let request = api.countries().country("us");
     /// ```
-    fn country(&mut self, country: &str) -> Self {
+    pub fn country(&mut self, country: &str) -> Self {
         self.parameters.insert("country".into(), country.into());
         self.to_owned()
     }
@@ -112,7 +84,7 @@ impl CountriesRequest for Request<CountriesResponse> {
     /// let api = HolidayAPI::new("00000000-0000-0000-0000-000000000000").unwrap();
     /// let request = api.countries().search("Japan");
     /// ```
-    fn search(&mut self, search: &str) -> Self {
+    pub fn search(&mut self, search: &str) -> Self {
         self.parameters.insert("search".into(), search.into());
         self.to_owned()
     }
@@ -126,21 +98,15 @@ impl CountriesRequest for Request<CountriesResponse> {
     /// let api = HolidayAPI::new("00000000-0000-0000-0000-000000000000").unwrap();
     /// let request = api.countries().public();
     /// ```
-    fn public(&mut self) -> Self {
+    pub fn public(&mut self) -> Self {
         self.parameters.insert("public".into(), "true".to_string());
         self.to_owned()
     }
-}
 
-pub trait HolidaysRequestTrait {
-    fn month(&mut self, month: i32) -> Self;
-    fn day(&mut self, day: i32) -> Self;
-    fn public(&mut self) -> Self;
-    fn subdivisions(&mut self) -> Self;
-    fn search(&mut self, search: &str) -> Self;
-    fn language(&mut self, language: &str) -> Self;
-    fn previous(&mut self) -> Self;
-    fn upcoming(&mut self) -> Self;
+    /// Returns only the important `Vec<Holiday>` field.
+    pub async fn get(self) -> Result<Vec<Country>, Box<dyn Error>> {
+        Ok(self.get_full().await?.countries)
+    }
 }
 
 impl Request<HolidaysResponse> {
@@ -155,13 +121,6 @@ impl Request<HolidaysResponse> {
         return holiday;
     }
 
-    /// Returns only the important `Vec<Holiday>` field.
-    pub async fn get(self) -> Result<Vec<Holiday>, Box<dyn Error>> {
-        Ok(self.get_full().await?.holidays)
-    }
-}
-
-impl HolidaysRequestTrait for Request<HolidaysResponse> {
     /// 1 or 2 digit month (1-12).
     ///
     /// # Examples
@@ -171,7 +130,7 @@ impl HolidaysRequestTrait for Request<HolidaysResponse> {
     ///
     /// let request = api.holidays("JP", 2020).month(12);
     /// ```
-    fn month(&mut self, month: i32) -> Self {
+    pub fn month(&mut self, month: i32) -> Self {
         self.parameters.insert("month".into(), month.to_string());
         self.to_owned()
     }
@@ -185,19 +144,19 @@ impl HolidaysRequestTrait for Request<HolidaysResponse> {
     ///
     /// let request = api.holidays("JP", 2020).month(12).day(20);
     /// ```
-    fn day(&mut self, day: i32) -> Self {
+    pub fn day(&mut self, day: i32) -> Self {
         self.parameters.insert("day".into(), day.to_string());
         self.to_owned()
     }
 
     /// Return only public holidays.
-    fn public(&mut self) -> Self {
+    pub fn public(&mut self) -> Self {
         self.parameters.insert("public".into(), "true".into());
         self.to_owned()
     }
 
     /// Return state / province holidays alongside countrywide holidays.
-    fn subdivisions(&mut self) -> Self {
+    pub fn subdivisions(&mut self) -> Self {
         self.parameters.insert("subdivisions".into(), "true".into());
         self.to_owned()
     }
@@ -210,7 +169,7 @@ impl HolidaysRequestTrait for Request<HolidaysResponse> {
     ///
     /// let request = api.holidays("JP", 2020).search("independence day");
     /// ```
-    fn search(&mut self, search: &str) -> Self {
+    pub fn search(&mut self, search: &str) -> Self {
         self.parameters.insert("search".into(), search.to_string());
         self.to_owned()
     }
@@ -225,7 +184,7 @@ impl HolidaysRequestTrait for Request<HolidaysResponse> {
     ///
     /// let request = api.holidays("JP", 2020).language("en");
     /// ```
-    fn language(&mut self, language: &str) -> Self {
+    pub fn language(&mut self, language: &str) -> Self {
         self.parameters
             .insert("language".into(), language.to_string());
         self.to_owned()
@@ -234,7 +193,7 @@ impl HolidaysRequestTrait for Request<HolidaysResponse> {
     /// Return the first day of holidays that occur before the specific date. month and day are required.
     ///
     /// Cannot be used with `upcoming`.
-    fn previous(&mut self) -> Self {
+    pub fn previous(&mut self) -> Self {
         self.parameters.insert("previous".into(), "true".into());
         self.to_owned()
     }
@@ -242,23 +201,23 @@ impl HolidaysRequestTrait for Request<HolidaysResponse> {
     /// Return the first day of holidays that occur after the specific date. month and day are required.
     ///
     /// Cannot be used with previous.
-    fn upcoming(&mut self) -> Self {
+    pub fn upcoming(&mut self) -> Self {
         self.parameters.insert("upcoming".into(), "true".into());
         self.to_owned()
     }
+
+    /// Returns only the important `Vec<Holiday>` field.
+    pub async fn get(self) -> Result<Vec<Holiday>, Box<dyn Error>> {
+        Ok(self.get_full().await?.holidays)
+    }
 }
 
-#[derive(Debug, Clone)]
-pub struct WorkdayRequest {
-    parameters: HashMap<String, String>,
-    api: HolidayAPI,
-}
-
-impl WorkdayRequest {
+impl Request<WorkdayResponse> {
     pub(crate) fn new(api: &HolidayAPI, country: &str, start: &str, days: i32) -> Self {
         let mut workday = Self {
             parameters: HashMap::new(),
             api: api.clone(),
+            _marker: PhantomData,
         };
         workday
             .parameters
@@ -268,51 +227,6 @@ impl WorkdayRequest {
         return workday;
     }
 
-    /// Response format (csv, json, php, tsv, yaml and xml). Defaults to JSON.
-    /// Only work with `request.get_raw()`
-    ///
-    /// # Examples
-    /// ```
-    /// use holidayapi_rust::prelude::*;
-    ///
-    /// let api = HolidayAPI::new("00000000-0000-0000-0000-000000000000").unwrap();
-    /// let request = api.workday("jp", "2021-01-01", 30).format("csv");
-    /// ```
-    pub fn format(&mut self, format: &str) -> Self {
-        self.parameters.insert("format".into(), format.into());
-        self.to_owned()
-    }
-
-    // Prettifies results to be more human-readable.
-    pub fn pretty(&mut self) -> Self {
-        self.parameters.insert("pretty".into(), "true".into());
-        self.to_owned()
-    }
-
-    /// Return the raw string response if the request was successful.
-    pub async fn get_raw(self) -> Result<String, Box<dyn Error>> {
-        Ok(self
-            .api
-            .custom_request(Endpoint::Workday, self.parameters)
-            .await?
-            .text()
-            .await?)
-    }
-
-    /// Parse the raw response and returns the full `WorkdayResponse` struct.
-    pub async fn get_full(self) -> Result<WorkdayResponse, Box<dyn Error>> {
-        let mut param = self.parameters;
-        param.insert("format".into(), "json".into());
-        Ok(serde_json::from_str(
-            &self
-                .api
-                .custom_request(Endpoint::Workday, param)
-                .await?
-                .text()
-                .await?,
-        )?)
-    }
-
     /// Returns only the important `("YYYY-MM-DD", Weekday)` tuple.
     pub async fn get(self) -> Result<(String, Date), Box<dyn Error>> {
         let res = self.get_full().await?;
@@ -320,17 +234,12 @@ impl WorkdayRequest {
     }
 }
 
-#[derive(Debug, Clone)]
-pub struct WorkdaysRequest {
-    parameters: HashMap<String, String>,
-    api: HolidayAPI,
-}
-
-impl WorkdaysRequest {
+impl Request<WorkdaysResponse> {
     pub fn new(api: &HolidayAPI, country: &str, start: &str, days: &str) -> Self {
         let mut workdays = Self {
             parameters: HashMap::new(),
             api: api.clone(),
+            _marker: PhantomData,
         };
         workdays
             .parameters
@@ -342,51 +251,6 @@ impl WorkdaysRequest {
         return workdays;
     }
 
-    /// Response format (csv, json, php, tsv, yaml and xml). Defaults to JSON.
-    /// Only work with `request.get_raw()`
-    ///
-    /// # Examples
-    /// ```
-    /// use holidayapi_rust::prelude::*;
-    ///
-    /// let api = HolidayAPI::new("00000000-0000-0000-0000-000000000000").unwrap();
-    /// let request = api.workdays("us", "2021-01-01", "2021-02-01").format("csv");
-    /// ```
-    pub fn format(&mut self, format: &str) -> Self {
-        self.parameters.insert("format".into(), format.into());
-        self.to_owned()
-    }
-
-    /// Prettifies results to be more human-readable.
-    pub fn pretty(&mut self) -> Self {
-        self.parameters.insert("pretty".into(), "true".into());
-        self.to_owned()
-    }
-
-    /// Return the raw string response if the request was successful.
-    pub async fn get_raw(self) -> Result<String, Box<dyn Error>> {
-        Ok(self
-            .api
-            .custom_request(Endpoint::Workdays, self.parameters)
-            .await?
-            .text()
-            .await?)
-    }
-
-    /// Parse the raw response and returns the full `WorkdaysResponse` struct.
-    pub async fn get_full(self) -> Result<WorkdaysResponse, Box<dyn Error>> {
-        let mut param = self.parameters;
-        param.insert("format".into(), "json".into());
-        Ok(serde_json::from_str(
-            &self
-                .api
-                .custom_request(Endpoint::Workdays, param)
-                .await?
-                .text()
-                .await?,
-        )?)
-    }
-
     /// Returns the number of working / business days between the specified start and end dates.
     pub async fn get(self) -> Result<u32, Box<dyn Error>> {
         let res = self.get_full().await?;
@@ -394,17 +258,12 @@ impl WorkdaysRequest {
     }
 }
 
-#[derive(Debug, Clone)]
-pub struct LanguagesRequest {
-    parameters: HashMap<String, String>,
-    api: HolidayAPI,
-}
-
-impl LanguagesRequest {
+impl Request<LanguagesResponse> {
     pub fn new(api: &HolidayAPI) -> Self {
         Self {
             parameters: HashMap::new(),
             api: api.clone(),
+            _marker: PhantomData,
         }
     }
 
@@ -432,51 +291,6 @@ impl LanguagesRequest {
     pub fn search(&mut self, search: &str) -> Self {
         self.parameters.insert("search".into(), search.into());
         self.to_owned()
-    }
-
-    /// Response format (csv, json, php, tsv, yaml and xml). Defaults to JSON.
-    /// Only work with `request.get_raw()`
-    ///
-    /// # Examples
-    /// ```
-    /// use holidayapi_rust::prelude::*;
-    ///
-    /// let api = HolidayAPI::new("00000000-0000-0000-0000-000000000000").unwrap();
-    /// let request = api.languages().format("csv");
-    /// ```
-    pub fn format(&mut self, format: &str) -> Self {
-        self.parameters.insert("format".into(), format.into());
-        self.to_owned()
-    }
-
-    /// Prettifies results to be more human-readable.
-    pub fn pretty(&mut self) -> Self {
-        self.parameters.insert("pretty".into(), "true".into());
-        self.to_owned()
-    }
-
-    /// Return the raw string response if the request was successful.
-    pub async fn get_raw(self) -> Result<String, Box<dyn Error>> {
-        Ok(self
-            .api
-            .custom_request(Endpoint::Languages, self.parameters)
-            .await?
-            .text()
-            .await?)
-    }
-
-    /// Parse the raw response and returns the full `LanguagesResponse` struct.
-    pub async fn get_full(self) -> Result<LanguagesResponse, Box<dyn Error>> {
-        let mut param = self.parameters;
-        param.insert("format".into(), "json".into());
-        Ok(serde_json::from_str(
-            &self
-                .api
-                .custom_request(Endpoint::Languages, param)
-                .await?
-                .text()
-                .await?,
-        )?)
     }
 
     /// Returns `Vec<Language>` based on your request parameters.

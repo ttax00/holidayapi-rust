@@ -5,10 +5,13 @@
 extern crate log;
 
 pub mod prelude;
+
 mod requests;
 mod responses;
-use prelude::{CountriesResponse, HolidaysResponse};
-use requests::{LanguagesRequest, Request, WorkdayRequest, WorkdaysRequest};
+use requests::Request;
+use responses::{
+    CountriesResponse, HolidaysResponse, LanguagesResponse, WorkdayResponse, WorkdaysResponse,
+};
 use serde_json::Value;
 use std::{collections::HashMap, error::Error, fmt};
 
@@ -229,8 +232,8 @@ impl HolidayAPI {
     ///	let api = HolidayAPI::new("00000000-0000-0000-0000-000000000000").unwrap();
     /// let request = api.workday("us","YYYY-MM-DD", 100);
     /// ```
-    pub fn workday(&self, country: &str, start: &str, days: i32) -> WorkdayRequest {
-        WorkdayRequest::new(self, country, start, days)
+    pub fn workday(&self, country: &str, start: &str, days: i32) -> Request<WorkdayResponse> {
+        Request::<WorkdayResponse>::new(self, country.into(), start, days)
     }
 
     /// Generates a minimal `workdays` request and returns it.
@@ -244,8 +247,8 @@ impl HolidayAPI {
     ///	let api = HolidayAPI::new("00000000-0000-0000-0000-000000000000").unwrap();
     /// let request = api.workdays("us", "YYYY-MM-DD", "YYYY-MM-DD");
     /// ```
-    pub fn workdays(&self, country: &str, start: &str, days: &str) -> WorkdaysRequest {
-        WorkdaysRequest::new(self, country, start, days)
+    pub fn workdays(&self, country: &str, start: &str, days: &str) -> Request<WorkdaysResponse> {
+        Request::<WorkdaysResponse>::new(self, country, start, days)
     }
 
     /// Generates a minimal `languages` request and returns it.
@@ -267,8 +270,8 @@ impl HolidayAPI {
     /// let api = HolidayAPI::new("00000000-0000-0000-0000-000000000000").unwrap();
     /// let specific_request = api.languages().search("united states");
     /// ```
-    pub fn languages(&self) -> LanguagesRequest {
-        LanguagesRequest::new(self)
+    pub fn languages(&self) -> Request<LanguagesResponse> {
+        Request::<LanguagesResponse>::new(self)
     }
 }
 
