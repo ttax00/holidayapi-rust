@@ -5,7 +5,7 @@ use crate::{
         CountriesResponse, Country, Date, Holiday, HolidaysResponse, Language, LanguagesResponse,
         WorkdayResponse, WorkdaysResponse,
     },
-    Endpoint, HolidayAPI,
+    HolidayAPI,
 };
 use std::{collections::HashMap, error::Error, marker::PhantomData};
 
@@ -37,7 +37,7 @@ where
     pub async fn get_raw(self) -> Result<String, Box<dyn Error>> {
         Ok(self
             .api
-            .custom_request(Endpoint::Countries, self.parameters)
+            .custom_request("countries", self.parameters)
             .await?
             .text()
             .await?)
@@ -47,8 +47,14 @@ where
     pub async fn get_full(self) -> Result<T, Box<dyn Error>> {
         let mut param = self.parameters;
         param.insert("format".into(), "json".into());
-        let response = self.api.custom_request(Endpoint::Countries, param).await?;
-        Ok(serde_json::from_str(response.text().await?.as_str())?)
+        Ok(serde_json::from_str(
+            self.api
+                .custom_request("countries", param)
+                .await?
+                .text()
+                .await?
+                .as_str(),
+        )?)
     }
 }
 

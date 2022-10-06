@@ -50,14 +50,6 @@ pub enum HolidayAPIError {
     InvalidVersion(String),
     RequestError(reqwest::Error, String),
 }
-#[derive(strum_macros::Display)]
-pub enum Endpoint {
-    Countries,
-    Holidays,
-    Languages,
-    Workday,
-    Workdays,
-}
 
 impl fmt::Display for HolidayAPIError {
     fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
@@ -161,20 +153,20 @@ impl HolidayAPI {
     /// Basic usage
     ///
     /// ```
-    /// use holidayapi_rust::{ HolidayAPI, Endpoint };
+    /// use holidayapi_rust::{ HolidayAPI };
     /// use std::collections::HashMap;
     ///
     /// let api = HolidayAPI::new("00000000-0000-0000-0000-000000000000").unwrap();
-    /// let _future = api.custom_request(Endpoint::Countries, HashMap::new());
+    /// let _future = api.custom_request("countries", HashMap::new());
     /// ```
     pub async fn custom_request(
         &self,
-        endpoint: Endpoint,
+        endpoint: &str,
         parameters: HashMap<String, String>,
     ) -> Result<Response, Box<dyn Error>> {
         let client = reqwest::Client::new();
         let url = Url::parse(self.base_url.as_str())?;
-        let url = url.join(endpoint.to_string().to_ascii_lowercase().as_str())?;
+        let url = url.join(endpoint.to_ascii_lowercase().as_str())?;
         let url = Url::parse_with_params(&format!("{}?key={}", url, self.key), parameters)?;
         let response = client.get(url).send().await?;
 
