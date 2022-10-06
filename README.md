@@ -16,7 +16,7 @@ Add the following to your `Cargo.toml`
 
 ```toml
 [dependencies]
-holidayapi_rust = "0.1.5"
+holidayapi_rust = "0.1.7"
 ```
 
 Or use `cargo` cli:
@@ -44,6 +44,7 @@ async fn main() {
 ### Builder pattern
 ```rust
 use holidayapi_rust::prelude::*;
+
 let holiday_api = HolidayAPI::new(VALID_KEY).unwrap();
 
 // Holidays
