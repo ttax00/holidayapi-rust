@@ -7,7 +7,7 @@ use crate::{
     },
     HolidayAPI, HolidayAPIError,
 };
-use std::{collections::HashMap, error::Error, marker::PhantomData};
+use std::{collections::HashMap, marker::PhantomData};
 
 #[derive(Debug, Clone)]
 pub struct Request<T: Clone> {
