@@ -163,24 +163,30 @@ impl HolidayAPI {
         &self,
         endpoint: &str,
         parameters: HashMap<String, String>,
-    ) -> Result<Response, Box<dyn Error>> {
+    ) -> Result<Response, HolidayAPIError> {
         let client = reqwest::Client::new();
-        let url = Url::parse(self.base_url.as_str())?;
-        let url = url.join(endpoint.to_ascii_lowercase().as_str())?;
-        let url = Url::parse_with_params(&format!("{}?key={}", url, self.key), parameters)?;
-        let response = client.get(url).send().await?;
+        let url = Url::parse(self.base_url.as_str()).unwrap();
+        let url = url.join(endpoint.to_ascii_lowercase().as_str()).unwrap();
+        let url = Url::parse_with_params(&format!("{}?key={}", url, self.key), parameters)
+            .expect("Parameters are invalid");
+        let response = client
+            .get(url)
+            .send()
+            .await
+            .map_err(|e| HolidayAPIError::RequestError(e, "".to_string()))?;
 
         match response.error_for_status_ref() {
             Ok(_) => Ok(response),
             Err(err) => {
-                let val = serde_json::from_str::<Value>(&response.text().await?)?;
+                let val = serde_json::from_str::<Value>(&response.text().await.unwrap())
+                    .expect("Error response to be JSON");
                 let o = val.as_object();
                 let error = o.and_then(|o| o.get("error")).unwrap();
 
-                Err(Box::new(HolidayAPIError::RequestError(
+                Err(HolidayAPIError::RequestError(
                     err,
                     error.as_str().unwrap().into(),
-                )))
+                ))
             }
         }
     }

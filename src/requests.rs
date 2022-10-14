@@ -5,7 +5,7 @@ use crate::{
         CountriesResponse, Country, Date, Holiday, HolidaysResponse, Language, LanguagesResponse,
         WorkdayResponse, WorkdaysResponse,
     },
-    HolidayAPI,
+    HolidayAPI, HolidayAPIError,
 };
 use std::{collections::HashMap, error::Error, marker::PhantomData};
 
@@ -34,17 +34,18 @@ where
     }
 
     /// Return the raw String of the response
-    pub async fn get_raw(self) -> Result<String, Box<dyn Error>> {
+    pub async fn get_raw(self) -> Result<String, HolidayAPIError> {
         Ok(self
             .api
             .custom_request("countries", self.parameters)
             .await?
             .text()
-            .await?)
+            .await
+            .unwrap())
     }
 
     /// Returns the parsed struct of the response if successful
-    pub async fn get_full(self) -> Result<T, Box<dyn Error>> {
+    pub async fn get_full(self) -> Result<T, HolidayAPIError> {
         let mut param = self.parameters;
         param.insert("format".into(), "json".into());
         Ok(serde_json::from_str(
@@ -52,9 +53,11 @@ where
                 .custom_request("countries", param)
                 .await?
                 .text()
-                .await?
+                .await
+                .unwrap()
                 .as_str(),
-        )?)
+        )
+        .expect("JSON is valid"))
     }
 }
 
@@ -110,7 +113,7 @@ impl Request<CountriesResponse> {
     }
 
     /// Returns only the important `Vec<Holiday>` field.
-    pub async fn get(self) -> Result<Vec<Country>, Box<dyn Error>> {
+    pub async fn get(self) -> Result<Vec<Country>, HolidayAPIError> {
         Ok(self.get_full().await?.countries)
     }
 }
@@ -213,7 +216,7 @@ impl Request<HolidaysResponse> {
     }
 
     /// Returns only the important `Vec<Holiday>` field.
-    pub async fn get(self) -> Result<Vec<Holiday>, Box<dyn Error>> {
+    pub async fn get(self) -> Result<Vec<Holiday>, HolidayAPIError> {
         Ok(self.get_full().await?.holidays)
     }
 }
@@ -234,7 +237,7 @@ impl Request<WorkdayResponse> {
     }
 
     /// Returns only the important `("YYYY-MM-DD", Weekday)` tuple.
-    pub async fn get(self) -> Result<(String, Date), Box<dyn Error>> {
+    pub async fn get(self) -> Result<(String, Date), HolidayAPIError> {
         let res = self.get_full().await?;
         Ok((res.date, res.weekday))
     }
@@ -258,7 +261,7 @@ impl Request<WorkdaysResponse> {
     }
 
     /// Returns the number of working / business days between the specified start and end dates.
-    pub async fn get(self) -> Result<u32, Box<dyn Error>> {
+    pub async fn get(self) -> Result<u32, HolidayAPIError> {
         let res = self.get_full().await?;
         Ok(res.workdays)
     }
@@ -300,7 +303,7 @@ impl Request<LanguagesResponse> {
     }
 
     /// Returns `Vec<Language>` based on your request parameters.
-    pub async fn get(self) -> Result<Vec<Language>, Box<dyn Error>> {
+    pub async fn get(self) -> Result<Vec<Language>, HolidayAPIError> {
         let res = self.get_full().await?;
         Ok(res.languages)
     }
