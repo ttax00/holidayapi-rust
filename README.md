@@ -1,7 +1,7 @@
 # Holiday API Rust Library
 
 [![License](https://img.shields.io/github/license/TechTheAwesome/holidayapi-rust?style=for-the-badge)](https://github.com/TechTheAwesome/holidayapi-rust/blob/main/LICENSE)
-[![Test Status](https://img.shields.io/github/workflow/status/techtheawesome/holidayapi-rust/Rust?style=for-the-badge)](https://github.com/TechTheAwesome/holidayapi-rust/actions)
+![GitHub Workflow Status](https://img.shields.io/github/actions/workflow/status/TechTheAwesome/holidayapi-rust/test.yml?style=for-the-badge)
 [![Crates.io](https://img.shields.io/crates/v/holidayapi_rust?style=for-the-badge)](https://crates.io/crates/holidayapi_rust)
 [![wakatime](https://wakatime.com/badge/user/4312729e-bc28-4bc0-9074-161a64a7ad20/project/5efdb06a-8b53-4d90-83bb-1f47a23a30c6.svg?style=for-the-badge)](https://wakatime.com/badge/user/4312729e-bc28-4bc0-9074-161a64a7ad20/project/5efdb06a-8b53-4d90-83bb-1f47a23a30c6)
 
